@@ -20,17 +20,15 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
 
-    - name: Grant execute permission for gradlew
+    - name: Build project
       run: |
-        find . -name "gradlew" -exec chmod +x {} +
-
-    - name: Build with Gradle
-      run: |
-        GRADLEW_PATH=$(find . -name "gradlew" | head -n 1)
-        if [ -n "$GRADLEW_PATH" ]; then
-          cd $(dirname "$GRADLEW_PATH")
+        if [ -f "./gradlew" ]; then
+          chmod +x gradlew
           ./gradlew build
+        elif [ -f "./build.gradle" ] || [ -f "./build.gradle.kts" ]; then
+          gradle build
         else
-          echo "gradlew not found"
+          echo "Gradle setup not found in root. Listing files:"
+          ls -la
           exit 1
         fi
